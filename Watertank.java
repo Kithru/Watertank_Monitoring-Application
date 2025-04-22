@@ -143,7 +143,7 @@ class WaterTankFrame extends JFrame{
 	}
 }
 
-class Example {
+class Watertank {
 	public static void main(String[] args) {
 		WaterTankContoller waterTankContoller = new WaterTankContoller();
 		waterTankContoller.setAlarmFrame(new AlarmFrame());
