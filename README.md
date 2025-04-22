@@ -1,3 +1,3 @@
-# Watertank_Monitering-App
+# Watertank_Monitoring-Application
 
 ##Java
