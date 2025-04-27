@@ -1,3 +1,4 @@
+
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -6,6 +7,31 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+class SMSFrame extends JFrame{
+
+	private JLabel smsLabel;
+
+	SMSFrame(){
+		setSize(400, 400);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle("SMS Sender");
+		setLayout(new FlowLayout());
+
+		smsLabel = new JLabel("SMS Sending : 50");
+		smsLabel.setFont(new Font("", Font.BOLD, 30));
+		add(smsLabel);
+
+		setVisible(true);
+	}
+// Kithru
+	public void setSMSLabelValue(int waterLevel){
+		if(waterLevel <=100 && waterLevel >= 0){
+			this.smsLabel.setText("SMS Sending : " + waterLevel );
+		}
+	}
+}
 
 class AlarmFrame extends JFrame{
 
@@ -88,6 +114,7 @@ class WaterTankContoller{
 	private AlarmFrame alarmFrame;
 	private DisplayFrame displayFrame;
 	private SplitterFrame splitterFrame;
+	private SMSFrame smsFrame;
 
 	public void setWaterLevel(int waterLevel){
 		if(this.waterLevel != waterLevel){
@@ -100,6 +127,7 @@ class WaterTankContoller{
 		alarmFrame.setAlarmLabelValue(waterLevel);
 		displayFrame.setDisplayLabelValue(waterLevel);
 		splitterFrame.setSplitterLabelValue(waterLevel);
+		smsFrame.setSMSLabelValue(waterLevel);
 	}
 
 	public void setAlarmFrame(AlarmFrame alarmFrame){
@@ -110,6 +138,9 @@ class WaterTankContoller{
 	}
 	public void setSplitterFrame(SplitterFrame splitterFrame){
 		this.splitterFrame = splitterFrame;
+	}
+	public void setSMSFrame(SMSFrame smsFrame){
+		this.smsFrame = smsFrame;
 	}
 }
 
@@ -149,7 +180,10 @@ class Watertank {
 		waterTankContoller.setAlarmFrame(new AlarmFrame());
 		waterTankContoller.setDisplayFrame(new DisplayFrame());
 		waterTankContoller.setSplitterFrame(new SplitterFrame());
-
+		waterTankContoller.setSMSFrame(new SMSFrame());
+		
 		new WaterTankFrame(waterTankContoller);
 	}
 }
+
+// Kithru
