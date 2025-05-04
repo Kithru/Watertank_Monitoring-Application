@@ -1,4 +1,3 @@
-
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -8,15 +7,19 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-class SMSFrame extends JFrame{
+interface WaterLevelObserver{
+	void update(int waterLevel);
+}
+
+class SMSSenderFrame extends JFrame implements WaterLevelObserver{
 
 	private JLabel smsLabel;
 
-	SMSFrame(){
+	SMSSenderFrame(){
 		setSize(400, 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("SMS Sender");
+		setTitle("SMS");
 		setLayout(new FlowLayout());
 
 		smsLabel = new JLabel("SMS Sending : 50");
@@ -25,15 +28,16 @@ class SMSFrame extends JFrame{
 
 		setVisible(true);
 	}
-// Kithru
-	public void setSMSLabelValue(int waterLevel){
+
+	public void update(int waterLevel){
 		if(waterLevel <=100 && waterLevel >= 0){
 			this.smsLabel.setText("SMS Sending : " + waterLevel );
 		}
 	}
 }
 
-class AlarmFrame extends JFrame{
+
+class AlarmFrame extends JFrame implements WaterLevelObserver{
 
 	private JLabel alarmLabel;
 
@@ -51,14 +55,14 @@ class AlarmFrame extends JFrame{
 		setVisible(true);
 	}
 
-	public void setAlarmLabelValue(int waterLevel){
+	public void update(int waterLevel){
 		if(waterLevel <=100 && waterLevel >= 0){
 			this.alarmLabel.setText(waterLevel > 50 ? "On" : "Off" );
 		}
 	}
 }
 
-class DisplayFrame extends JFrame{
+class DisplayFrame extends JFrame implements WaterLevelObserver{
 
 	private JLabel displayLabel;
 
@@ -76,14 +80,14 @@ class DisplayFrame extends JFrame{
 		setVisible(true);
 	}
 
-	public void setDisplayLabelValue(int waterLevel){
+	public void update(int waterLevel){
 		if(waterLevel <=100 && waterLevel >= 0){
 			this.displayLabel.setText(Integer.toString(waterLevel));
 		}
 	}
 }
 
-class SplitterFrame extends JFrame{
+class SplitterFrame extends JFrame implements WaterLevelObserver{
 
 	private JLabel splitterLabel;
 
@@ -101,7 +105,7 @@ class SplitterFrame extends JFrame{
 		setVisible(true);
 	}
 
-	public void setSplitterLabelValue(int waterLevel){
+	public void update(int waterLevel){
 		if(waterLevel <=100 && waterLevel >= 0){
 			this.splitterLabel.setText(waterLevel > 75 ? "On" : "Off" );
 		}
@@ -111,10 +115,7 @@ class SplitterFrame extends JFrame{
 class WaterTankContoller{
 	private int waterLevel;
 
-	private AlarmFrame alarmFrame;
-	private DisplayFrame displayFrame;
-	private SplitterFrame splitterFrame;
-	private SMSFrame smsFrame;
+	private WaterLevelObserver[] observers = new WaterLevelObserver[0];
 
 	public void setWaterLevel(int waterLevel){
 		if(this.waterLevel != waterLevel){
@@ -124,23 +125,18 @@ class WaterTankContoller{
 	}
 
 	public void notifyObjects(){
-		alarmFrame.setAlarmLabelValue(waterLevel);
-		displayFrame.setDisplayLabelValue(waterLevel);
-		splitterFrame.setSplitterLabelValue(waterLevel);
-		smsFrame.setSMSLabelValue(waterLevel);
+		for (WaterLevelObserver waterLevelObserver : observers) {
+			waterLevelObserver.update(waterLevel);
+		}
 	}
 
-	public void setAlarmFrame(AlarmFrame alarmFrame){
-		this.alarmFrame = alarmFrame;
-	}
-	public void setDisplayFrame(DisplayFrame displayFrame){
-		this.displayFrame = displayFrame;
-	}
-	public void setSplitterFrame(SplitterFrame splitterFrame){
-		this.splitterFrame = splitterFrame;
-	}
-	public void setSMSFrame(SMSFrame smsFrame){
-		this.smsFrame = smsFrame;
+	public void addWaterLevelObserver(WaterLevelObserver observer){
+		WaterLevelObserver[] temp = new WaterLevelObserver[observers.length + 1];
+		for (int i = 0; i < observers.length; i++) {
+			temp[i] = observers[i];
+		}
+		temp[temp.length-1] = observer;
+		observers = temp;
 	}
 }
 
@@ -174,16 +170,13 @@ class WaterTankFrame extends JFrame{
 	}
 }
 
-class Watertank {
+class Example {
 	public static void main(String[] args) {
 		WaterTankContoller waterTankContoller = new WaterTankContoller();
-		waterTankContoller.setAlarmFrame(new AlarmFrame());
-		waterTankContoller.setDisplayFrame(new DisplayFrame());
-		waterTankContoller.setSplitterFrame(new SplitterFrame());
-		waterTankContoller.setSMSFrame(new SMSFrame());
-		
+		waterTankContoller.addWaterLevelObserver(new AlarmFrame());
+		waterTankContoller.addWaterLevelObserver(new DisplayFrame());
+		waterTankContoller.addWaterLevelObserver(new SplitterFrame());
+		waterTankContoller.addWaterLevelObserver(new SMSSenderFrame());
 		new WaterTankFrame(waterTankContoller);
 	}
 }
-
-// Kithru
